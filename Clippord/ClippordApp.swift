@@ -11,7 +11,18 @@ import SwiftUI
 struct ClippordApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            Clippord()
+//                .onAppear {
+//                // Listen for when the app loses focus
+//                NotificationCenter.default.addObserver(
+//                    forName: NSApplication.willResignActiveNotification,
+//                    object: nil,
+//                    queue: .main
+//                ) { _ in
+//                    // Quit the app when it loses focus
+//                    NSApplication.shared.terminate(nil)
+//                }
+//            }
         }
     }
 }
