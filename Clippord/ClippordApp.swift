@@ -9,24 +9,26 @@ import SwiftUI
 
 @main
 struct ClippordApp: App {
+    @State var currentNumber: String = "1"
     var body: some Scene {
         WindowGroup {
             Clippord()
                 .onAppear {
                     positionWindowNextToActiveScreen()
+                    // Listen for when the app loses focus
+                    //                NotificationCenter.default.addObserver(
+                    //                    forName: NSApplication.willResignActiveNotification,
+                    //                    object: nil,
+                    //                    queue: .main
+                    //                ) { _ in
+                    //                    // Quit the app when it loses focus
+                    //                    NSApplication.shared.terminate(nil)
+                    //                }
                 }
-            //                .onAppear {
-            //                // Listen for when the app loses focus
-            //                NotificationCenter.default.addObserver(
-            //                    forName: NSApplication.willResignActiveNotification,
-            //                    object: nil,
-            //                    queue: .main
-            //                ) { _ in
-            //                    // Quit the app when it loses focus
-            //                    NSApplication.shared.terminate(nil)
-            //                }
-            //            }
         }
+            MenuBarExtra("Clippord", systemImage: "doc.on.clipboard") {
+                ClippordMenuBar()
+            }
     }
     
     private func positionWindowNextToActiveScreen() {
