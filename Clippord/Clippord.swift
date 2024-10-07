@@ -7,6 +7,28 @@
 
 import SwiftUI
 
+func copyToClipboard(_ content: String) {
+    ClipboardManager.shared.ignoreNextClipboardChange()
+    let pasteboard = NSPasteboard.general
+    pasteboard.clearContents()
+    pasteboard.setString(content, forType: .string)
+}
+
+class WindowDelegate: NSObject, NSWindowDelegate, ObservableObject {
+    var onClose: (() -> Void)?
+    
+    func windowDidResignKey(_ notification: Notification) {
+        if let window = notification.object as? NSWindow {
+            window.delegate = nil // Remove the delegate to prevent issues
+            window.close()
+        }
+    }
+    
+    func windowWillClose(_ notification: Notification) {
+        onClose?()
+    }
+}
+
 struct ClipView: View {
     let clip: String
     let isPinned: Bool
@@ -131,13 +153,6 @@ struct ClipView: View {
         floatingWindow?.orderOut(nil)
         floatingWindow = nil
     }
-    
-    private func copyToClipboard(_ content: String) {
-        ClipboardManager.shared.ignoreNextClipboardChange()
-        let pasteboard = NSPasteboard.general
-        pasteboard.clearContents()
-        pasteboard.setString(content, forType: .string)
-    }
 }
 
 struct StyledButton: View {
@@ -162,12 +177,14 @@ struct StyledButton: View {
         }
         .buttonStyle(PlainButtonStyle())
         .animation(.easeInOut(duration: 0.2), value: hoverStates[label] ?? false)
+        .focusable(false)
     }
 }
 
 struct Clippord: View {
     @ObservedObject var clipboardManager = ClipboardManager.shared
     @State private var isPinnedClipsExpanded = true
+    @StateObject private var windowDelegate = WindowDelegate()
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -224,6 +241,7 @@ struct Clippord: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .onAppear {
+            setupWindowFocusObserver()
             setWindowSize(width: 230, height: 600)
             clipboardManager.startClipboardPolling()
         }
@@ -233,6 +251,12 @@ struct Clippord: View {
         if let window = NSApplication.shared.windows.first {
             let newSize = NSSize(width: width, height: height)
             window.setContentSize(newSize)  // Set the window content size
+        }
+    }
+    
+    private func setupWindowFocusObserver() {
+        if let window = NSApplication.shared.windows.first {
+            window.delegate = windowDelegate
         }
     }
 }

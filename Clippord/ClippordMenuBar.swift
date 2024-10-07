@@ -8,15 +8,38 @@
 import SwiftUI
 
 struct ClippordMenuBar: View {
-           var body: some View {
-                Button("Clip 1") {
-                    // Handle Clip 1 action
+    @ObservedObject var clipboardManager = ClipboardManager.shared
+    @State private var isPinnedClipsExpanded = true
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            if !clipboardManager.pinnedClips.isEmpty {
+                Text("Pinned Clips")
+                    .font(.headline)
+                    .padding(10)
+                    .frame(width: 220)
+                ForEach(clipboardManager.pinnedClips, id: \.self) { clip in
+                    let cleanClip = String(clip.trimmingCharacters(in: .whitespacesAndNewlines).prefix(40).trimmingCharacters(in: .whitespacesAndNewlines) + "...")
+                    StyledButton(label: cleanClip, action: {copyToClipboard(clip)})
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
                 }
-                Button("Clip 2") {
-                    // Handle Clip 2 action
-                }
-                Button("Clip 3") {
-                    // Handle Clip 3 action
-                }
+                Divider()
             }
+            Text("Clips").font(.headline).padding(.leading, 10)
+            ForEach(clipboardManager.clips, id: \.self) { clip in
+                let cleanClip = String(clip.trimmingCharacters(in: .whitespacesAndNewlines).prefix(40).trimmingCharacters(in: .whitespacesAndNewlines) + "...")
+                StyledButton(label: cleanClip, action: {copyToClipboard(clip)})
+            }
+            
+            if !clipboardManager.clips.isEmpty {
+                Spacer()
+                Divider()
+                StyledButton(label: "Clear Clippord", action: {
+                    clipboardManager.clearClips()
+                })
+            }
+        }
+    }
+    
 }
