@@ -8,7 +8,7 @@
 import SwiftUI
 
 func copyToClipboard(_ content: String) {
-    ClipboardManager.shared.ignoreNextClipboardChange()
+    ClippordManager.shared.ignoreNextClipboardChange()
     let pasteboard = NSPasteboard.general
     pasteboard.clearContents()
     pasteboard.setString(content, forType: .string)
@@ -19,7 +19,7 @@ class WindowDelegate: NSObject, NSWindowDelegate, ObservableObject {
     
     func windowDidResignKey(_ notification: Notification) {
         if let window = notification.object as? NSWindow {
-            window.delegate = nil // Remove the delegate to prevent issues
+            window.delegate = nil
             window.close()
         }
     }
@@ -36,6 +36,7 @@ struct ClipView: View {
     @State private var showWindow = false
     @State private var floatingWindow: NSWindow?
     @State private var isHovering = false
+    @State private var pinHovering = false
     
     var body: some View {
         let cleanClip = clip.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -75,19 +76,22 @@ struct ClipView: View {
             Button(action: {
                 togglePin()
             }) {
-                Image(systemName: isPinned ? "star.fill" : "star")
-                    .foregroundColor(isPinned ? .yellow : .gray)
+                Image(systemName: pinHovering ? "star.fill" : "star")
+                    .foregroundColor(isPinned && !pinHovering || !isPinned && pinHovering ? .yellow :  .gray)
             }
-            .padding( 10)
+            .padding(5)
             .focusable(false)
+            .onHover { hovering in
+                pinHovering = hovering
+            }
         }
     }
     
     private func togglePin() {
         if isPinned {
-            ClipboardManager.shared.unpinClip(clip)
+            ClippordManager.shared.unpinClip(clip)
         } else {
-            ClipboardManager.shared.pinClip(clip)
+            ClippordManager.shared.pinClip(clip)
         }
     }
     
@@ -126,7 +130,7 @@ struct ClipView: View {
         )
         window.contentView = view
         
-        if let parentWindow = NSApplication.shared.windows.first, let screen = parentWindow.screen {
+        if let parentWindow = NSApplication.shared.windows.first(where: { $0.title == "Clippord" }), let screen = parentWindow.screen {
             let parentFrame = parentWindow.frame
             let availableSpaceOnRight = screen.visibleFrame.maxX - parentFrame.maxX
             var windowX = parentFrame.maxX + 10
@@ -173,7 +177,7 @@ struct StyledButton: View {
         .frame(width: 200, alignment: .leading)
         .padding(.leading, 10)
         .onHover { hovering in
-            hoverStates[label] = hovering  // Update hover state when the mouse enters/exits
+            hoverStates[label] = hovering
         }
         .buttonStyle(PlainButtonStyle())
         .animation(.easeInOut(duration: 0.2), value: hoverStates[label] ?? false)
@@ -182,16 +186,21 @@ struct StyledButton: View {
 }
 
 struct Clippord: View {
-    @ObservedObject var clipboardManager = ClipboardManager.shared
-    @State private var isPinnedClipsExpanded = true
+    @ObservedObject var clipboardManager = ClippordManager.shared
     @StateObject private var windowDelegate = WindowDelegate()
+    
+    @State private var isPinnedClipsExpanded: Bool = UserDefaults.standard.bool(forKey: "pinnedClipsStateKey") {
+        didSet {
+            UserDefaults.standard.set(self.isPinnedClipsExpanded, forKey: "pinnedClipsStateKey")
+        }
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             if !clipboardManager.pinnedClips.isEmpty {
                 HStack {
                     Button(action: {
-                        isPinnedClipsExpanded.toggle()  // Toggle the expanded/collapsed state
+                        isPinnedClipsExpanded.toggle()
                     }) {
                         HStack {
                             Text("Pinned Clips")
@@ -208,7 +217,7 @@ struct Clippord: View {
                 if isPinnedClipsExpanded {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 0) {
-                            ForEach(clipboardManager.pinnedClips, id: \.self) { clip in
+                            ForEach(clipboardManager.pinnedClips.reversed(), id: \.self) { clip in
                                 ClipView(clip: clip, isPinned: true)
                             }
                         }
@@ -222,7 +231,7 @@ struct Clippord: View {
             Text("Clips").font(.headline).padding(.leading, 10)
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
-                    ForEach(clipboardManager.clips, id: \.self) { clip in
+                    ForEach(clipboardManager.clips.reversed(), id: \.self) { clip in
                         ClipView(clip: clip, isPinned: clipboardManager.isPinned(clip))
                     }
                 }
@@ -243,14 +252,13 @@ struct Clippord: View {
         .onAppear {
             setupWindowFocusObserver()
             setWindowSize(width: 230, height: 600)
-            clipboardManager.startClipboardPolling()
         }
     }
     
     private func setWindowSize(width: CGFloat, height: CGFloat) {
         if let window = NSApplication.shared.windows.first {
             let newSize = NSSize(width: width, height: height)
-            window.setContentSize(newSize)  // Set the window content size
+            window.setContentSize(newSize)
         }
     }
     

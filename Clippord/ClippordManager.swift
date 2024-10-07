@@ -9,8 +9,8 @@ import Combine
 import Foundation
 import SwiftUI
 
-class ClipboardManager: ObservableObject {
-    static let shared = ClipboardManager()
+class ClippordManager: ObservableObject {
+    static let shared = ClippordManager()
     
     @Published private(set) var clips: [String] = []
     @Published private(set) var pinnedClips: [String] = []
@@ -32,6 +32,7 @@ class ClipboardManager: ObservableObject {
         pinnedFileURL = appDirectory.appendingPathComponent("pinnedClips.json")
         
         loadPinnedClips()
+        startClipboardPolling()
     }
     
     func startClipboardPolling() {

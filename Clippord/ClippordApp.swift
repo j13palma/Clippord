@@ -6,32 +6,56 @@
 //
 
 import SwiftUI
+import KeyboardShortcuts
+
+extension KeyboardShortcuts.Name {
+    static let openClippord = Self("openClippord", default: .init(.v, modifiers: [.command, .option]))
+}
 
 @main
 struct ClippordApp: App {
-    @State private var windowController: ClippordWindowController?
+    private let windowManager = WindowManager() // Now mutable
+    
+    init() {
+        KeyboardShortcuts.onKeyUp(for: .openClippord) { [self] in
+            print(KeyboardShortcuts.Name.openClippord)
+            windowManager.showMainWindow()
+        }
+    }
     
     var body: some Scene {
-        MenuBarExtra("Clippord", systemImage: "doc.on.clipboard") {
-            ClippordMenuBar()
-            Button("Open Clippord Window") {
-                showMainWindow()
+        MenuBarExtra {
+           VStack{
+                ClippordMenuBar()
+                
+                Divider()
+                Button("Open Clippord Window") {
+                    windowManager.showMainWindow()
+                }
+                .globalKeyboardShortcut(.openClippord)
+                
+                Divider()
+                Button("Preferences...") {
+                    PreferencesWindowController.shared.showWindow()
+                }
+                .keyboardShortcut(",", modifiers: [.command])
+                
+                Divider()
+                Button("Quit Clippord") {
+                    NSApplication.shared.terminate(nil)
+                }
+                .keyboardShortcut("q", modifiers: [.command])
             }
+            
+        }label: {
+            let image: NSImage = {
+                    let ratio = $0.size.height / $0.size.width
+                    $0.size.height = 18
+                    $0.size.width = 18 / ratio
+                    return $0
+                }(NSImage(named: "ClippordMenuBar")!)
+
+                Image(nsImage: image)
         }
-    }
-    private func createWindowController() -> ClippordWindowController {
-        let controller = ClippordWindowController()
-        controller.onClose = {
-            self.windowController = nil
-        }
-        return controller
-    }
-    
-    private func showMainWindow() {
-        if windowController == nil {
-            windowController = createWindowController()
-        }
-        
-        windowController?.showWindow()
     }
 }

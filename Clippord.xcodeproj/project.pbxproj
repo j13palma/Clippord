@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		25C2CCA52CB419D500637B3C /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = 25C2CCA42CB419D500637B3C /* KeyboardShortcuts */; };
+		25C2CCAE2CB477E700637B3C /* LaunchAtLogin in Frameworks */ = {isa = PBXBuildFile; productRef = 25C2CCAD2CB477E700637B3C /* LaunchAtLogin */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		25A8852E2CADC015009A52C0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +57,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				25C2CCAE2CB477E700637B3C /* LaunchAtLogin in Frameworks */,
+				25C2CCA52CB419D500637B3C /* KeyboardShortcuts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +119,8 @@
 			);
 			name = Clippord;
 			packageProductDependencies = (
+				25C2CCA42CB419D500637B3C /* KeyboardShortcuts */,
+				25C2CCAD2CB477E700637B3C /* LaunchAtLogin */,
 			);
 			productName = Clippord;
 			productReference = 25A8851C2CADC014009A52C0 /* Clippord.app */;
@@ -195,6 +204,10 @@
 			);
 			mainGroup = 25A885132CADC014009A52C0;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				25C2CCA32CB419D500637B3C /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
+				25C2CCAC2CB477E700637B3C /* XCRemoteSwiftPackageReference "LaunchAtLogin-Modern" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 25A8851D2CADC014009A52C0 /* Products */;
 			projectDirPath = "";
@@ -543,6 +556,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		25C2CCA32CB419D500637B3C /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sindresorhus/KeyboardShortcuts";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.0;
+			};
+		};
+		25C2CCAC2CB477E700637B3C /* XCRemoteSwiftPackageReference "LaunchAtLogin-Modern" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sindresorhus/LaunchAtLogin-Modern";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		25C2CCA42CB419D500637B3C /* KeyboardShortcuts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 25C2CCA32CB419D500637B3C /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */;
+			productName = KeyboardShortcuts;
+		};
+		25C2CCAD2CB477E700637B3C /* LaunchAtLogin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 25C2CCAC2CB477E700637B3C /* XCRemoteSwiftPackageReference "LaunchAtLogin-Modern" */;
+			productName = LaunchAtLogin;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 25A885142CADC014009A52C0 /* Project object */;
 }
