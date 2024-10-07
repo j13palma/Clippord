@@ -6,7 +6,7 @@ Features:
 
 	•	📝 Unlimited Clipboard History: Automatically save all your copied text, links, and images.
 	•	🚀 Quick Access: Access your clipboard history with a simple keyboard shortcut or via the menu bar.
-	•	🔍 Searchable History: Easily search through your clipboard history to find past items in seconds.
+	•	🔍 Searchable History(Coming Soon): Easily search through your clipboard history to find past items in seconds.
 	•	⭐ Favorites: Pin important clipboard items for quick access.
 	•	🎨 Sleek macOS Interface: Designed with a clean and native macOS feel, blending seamlessly into your workflow.
 	•	🔐 Privacy-Focused: Your clipboard history is stored locally—Clippord values your privacy.
