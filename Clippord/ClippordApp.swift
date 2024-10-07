@@ -40,7 +40,6 @@ struct ClippordApp: App {
                 }
                 .keyboardShortcut(",", modifiers: [.command])
                 
-                Divider()
                 Button("Quit Clippord") {
                     NSApplication.shared.terminate(nil)
                 }
