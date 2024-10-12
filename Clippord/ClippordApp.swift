@@ -18,7 +18,6 @@ struct ClippordApp: App {
     
     init() {
         KeyboardShortcuts.onKeyUp(for: .openClippord) { [self] in
-            print(KeyboardShortcuts.Name.openClippord)
             windowManager.showMainWindow()
         }
     }

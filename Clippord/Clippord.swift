@@ -37,12 +37,16 @@ struct ClipView: View {
     @State private var floatingWindow: NSWindow?
     @State private var isHovering = false
     @State private var pinHovering = false
+    @State private var showCopyOverlay = false
     
     var body: some View {
         let cleanClip = clip.trimmingCharacters(in: .whitespacesAndNewlines)
         
         HStack {
-            Button(action: {copyToClipboard(clip)}) {
+            Button(action: {
+                copyToClipboard(clip)
+                triggerCopyOverlay()
+            }) {
                 Text(cleanClip)
                     .frame(width: 150, alignment: .leading)
                     .lineLimit(1)
@@ -85,6 +89,23 @@ struct ClipView: View {
                 pinHovering = hovering
             }
         }
+        .overlay(
+                    Text("Clipped!")
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 8)
+                        .background(Color.black.opacity(0.8))
+                        .cornerRadius(10)
+                        .opacity(showCopyOverlay ? 1 : 0)
+                        .animation(.easeInOut(duration: 0.3), value: showCopyOverlay)
+                        .onAppear {
+                            if showCopyOverlay {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                    showCopyOverlay = false
+                                }
+                            }
+                        }
+                    )
     }
     
     private func togglePin() {
@@ -92,6 +113,13 @@ struct ClipView: View {
             ClippordManager.shared.unpinClip(clip)
         } else {
             ClippordManager.shared.pinClip(clip)
+        }
+    }
+    
+    private func triggerCopyOverlay() {
+        showCopyOverlay = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            showCopyOverlay = false
         }
     }
     
