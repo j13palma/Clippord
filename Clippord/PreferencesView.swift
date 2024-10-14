@@ -39,12 +39,6 @@ struct PreferencesView: View {
             LaunchAtLogin.Toggle("🐾 Launch at login 🐾")
                 .padding(.bottom, 20)
             
-            Button("Buy me a coffee ☕️"){
-                if let url = URL(string: "https://buymeacoffee.com/palmtech") {
-                    NSWorkspace.shared.open(url)
-                }
-            }
-            
             Spacer()
         }
         .padding()
